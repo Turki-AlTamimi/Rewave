@@ -114,3 +114,29 @@ fn decode_rejects_bad_magic_and_truncation() {
     assert!(decode(&b).is_none());
     assert!(decode(&encode(&ControlMessage::HandshakeOk)[..9]).is_none());
 }
+
+use rewave_core::protocol::dispatch::*;
+
+#[test]
+fn dispatch_table_matches_spec() {
+    let mut d = Dispatcher::new();
+    let m1 = vec![0u8; 965];
+    let m6 = vec![0u8; 973];
+    assert_eq!(d.classify(&m1), Class::LegacyAccept);       // 965, no session
+    d.adopt_session([1u8; 32]);                              // session established
+    assert_eq!(d.classify(&m1), Class::LegacyRejected);      // 965 with session
+    assert_eq!(d.classify(&m6), Class::AuthCandidate);       // 973 with session → verify HMAC next
+    assert_eq!(d.classify(&[0u8; 100]), Class::Other);       // unknown length
+}
+
+#[test]
+fn replay_protection_strictly_increasing() {
+    let mut d = Dispatcher::new();
+    d.adopt_session([1u8; 32]);
+    assert!(d.check_and_advance_seq(0));   // first seq 0 accepted (init -1)
+    assert!(d.check_and_advance_seq(1));
+    assert!(!d.check_and_advance_seq(1));  // replay
+    assert!(!d.check_and_advance_seq(0));  // behind
+    d.reset_session();
+    assert!(d.check_and_advance_seq(0));   // reset re-accepts seq 0
+}
