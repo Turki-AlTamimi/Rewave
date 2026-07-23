@@ -1,0 +1,32 @@
+[package]
+name = "rewave-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+windows = { version = "0.58", features = [
+    "Media_Audio", "Media_Devices", "Devices_WiFiDirect",
+    "Networking_Sockets", "System_Threading",
+    "Win32_Media_Audio", "Win32_System_Com", "Win32_System_Threading",
+    "Win32_System_Power", "Win32_NetworkManagement_WiFi",
+] }
+hmac = "0.12"
+sha2 = "0.10"
+hkdf = "0.12"
+p256 = { version = "0.13", features = ["ecdh"] }
+rand = "0.8"
+tokio = { version = "1", features = ["full"] }
+socket2 = "0.5"
+mdns-sd = "0.10"
+tokio-tungstenite = "0.24"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rubato = "0.15"
+log = "0.4"
+env_logger = "0.11"
+thiserror = "2"
+parking_lot = "0.12"
+ringbuf = "0.4"
+
+[dev-dependencies]
+hex = "0.4"

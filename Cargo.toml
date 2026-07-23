@@ -1,0 +1,3 @@
+[workspace]
+members = ["rewave-core", "rewave-app"]
+resolver = "2"
