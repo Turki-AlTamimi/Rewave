@@ -1,4 +1,7 @@
-use super::constants::{AUTH_TAG_BYTES, SESSION_INFO, SESSION_KEY};
+use super::constants::{
+    AUTH_TAG_BYTES, FINGERPRINT, RESUME_HMAC_BYTES, RESUME_RECV_CTX, RESUME_SENDER_CTX,
+    SESSION_INFO, SESSION_KEY,
+};
 use super::hkdf::hkdf_sha256;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
@@ -29,4 +32,33 @@ pub fn m6_tag(session_key: &[u8; 32], seq: u32, pcm_960: &[u8]) -> [u8; AUTH_TAG
     mac.update(pcm_960);
     let digest = mac.finalize().into_bytes();
     digest[..AUTH_TAG_BYTES].try_into().expect("slice len")
+}
+
+/// HMAC(pairing_key, key_id ‖ Ns ‖ "resume-sender")[:16] — sender has not seen Nr yet.
+pub fn resume_sender_hmac(pk: &[u8; 32], key_id: &[u8; 8], ns: &[u8; 16]) -> [u8; RESUME_HMAC_BYTES] {
+    let mut mac = <Hmac<Sha256> as Mac>::new_from_slice(pk).expect("32");
+    mac.update(key_id);
+    mac.update(ns);
+    mac.update(RESUME_SENDER_CTX);
+    mac.finalize().into_bytes()[..RESUME_HMAC_BYTES].try_into().expect("len")
+}
+
+/// HMAC(pairing_key, key_id ‖ Nr ‖ Ns ‖ "resume-recv")[:16].
+pub fn resume_receiver_hmac(pk: &[u8; 32], key_id: &[u8; 8], ns: &[u8; 16], nr: &[u8; 16]) -> [u8; RESUME_HMAC_BYTES] {
+    let mut mac = <Hmac<Sha256> as Mac>::new_from_slice(pk).expect("32");
+    mac.update(key_id);
+    mac.update(nr);
+    mac.update(ns);
+    mac.update(RESUME_RECV_CTX);
+    mac.finalize().into_bytes()[..RESUME_HMAC_BYTES].try_into().expect("len")
+}
+
+/// SHA-256(senderNonce ‖ host ‖ host)[:8] — v1 PIN-path synthetic fingerprint (§7.4).
+pub fn synthetic_fingerprint_v1(ns: &[u8; 16], host_addr: &str) -> [u8; FINGERPRINT] {
+    use sha2::Digest;
+    let mut h = sha2::Sha256::new();
+    h.update(ns);
+    h.update(host_addr.as_bytes());
+    h.update(host_addr.as_bytes());
+    h.finalize()[..FINGERPRINT].try_into().expect("len")
 }

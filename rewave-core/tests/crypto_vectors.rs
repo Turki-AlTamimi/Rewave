@@ -110,3 +110,19 @@ fn decode_pubkey_rejects_non_uncompressed_prefix() {
     bad.extend_from_slice(&[0u8; 32]);
     assert!(decode_pubkey(&bad).is_err());
 }
+
+use rewave_core::crypto::session::{resume_receiver_hmac, resume_sender_hmac, synthetic_fingerprint_v1};
+
+#[test]
+fn resume_hmac_labels_and_order() {
+    let pk = hex::decode("df11da0a69555c8462e9b53020fb3b1307635a207fa141ddc629901dba796ceb").unwrap();
+    let kid: [u8; 8] = hex::decode("c134ef58cb87e775").unwrap().try_into().unwrap();
+    let pk: &[u8; 32] = pk.as_slice().try_into().unwrap();
+    assert_eq!(hex::encode(resume_sender_hmac(pk, &kid, &NS)), "c109abb6870e36fa114f417bf314840b");
+    assert_eq!(hex::encode(resume_receiver_hmac(pk, &kid, &NS, &NR)), "267579c8567441087b61a8495fea5614");
+}
+
+#[test]
+fn v1_synthetic_fingerprint() {
+    assert_eq!(hex::encode(synthetic_fingerprint_v1(&NS, "192.168.1.50")), "b66d0e4c94f4d364");
+}
