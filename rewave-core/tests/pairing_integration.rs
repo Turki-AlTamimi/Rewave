@@ -21,6 +21,50 @@ fn new_flow() -> PairingFlow {
 }
 
 #[test]
+fn confirm_pairing_end_to_end() {
+    let sim = SimReceiver::start("SimTab".into(), "1234".into());
+    let mut flow = new_flow();
+    let result = flow
+        .confirm_pair(("127.0.0.1".parse().unwrap(), sim.disc_port), Duration::from_secs(5))
+        .unwrap();
+    assert_eq!(result.key_id, sim.key_id().unwrap());
+    assert!(flow.session_key().is_some());
+    assert!(sim.pairing_key().is_some());
+    assert_eq!(sim.pairing_key().unwrap(), result.pairing_key);
+    assert_eq!(sim.last_session_key(), Some(result.session_key));
+    assert_eq!(sim.stats.lock().unwrap().pair_requests, 1);
+}
+
+#[test]
+fn tofu_resume_silent_reconnect() {
+    let sim = SimReceiver::start("SimTab".into(), "1234".into());
+    let mut flow = new_flow();
+    flow.confirm_pair(("127.0.0.1".parse().unwrap(), sim.disc_port), Duration::from_secs(5))
+        .unwrap();
+    let mut flow2 = new_flow();
+    flow2.load_store(flow.store_path()).unwrap();
+    flow2.resume(("127.0.0.1".parse().unwrap(), sim.disc_port), Duration::from_secs(3)).unwrap();
+    let key = *flow2.session_key().unwrap();
+    assert_eq!(Some(key), sim.last_session_key());
+    let sock = UdpSocket::bind("127.0.0.1:0").unwrap();
+    for seq in 0..3u32 {
+        sock.send_to(&encode_m6(seq, 0, &[0xCD; 960], &key), format!("127.0.0.1:{}", sim.audio_port))
+            .unwrap();
+    }
+    std::thread::sleep(Duration::from_millis(200));
+    assert_eq!(sim.stats.lock().unwrap().accepted, 3);
+}
+
+#[test]
+fn resume_without_pairing_errors() {
+    let sim = SimReceiver::start("SimTab".into(), "1234".into());
+    let _ = sim;
+    let mut flow = new_flow();
+    let err = flow.resume(("127.0.0.1".parse().unwrap(), 1), Duration::from_millis(50));
+    assert!(matches!(err, Err(rewave_core::pairing::flow::FlowError::NoPairing)));
+}
+
+#[test]
 fn pin_handshake_end_to_end_vs_sim() {
     let sim = SimReceiver::start("SimTab".into(), "1234".into());
     let mut flow = new_flow();
