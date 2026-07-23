@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewave — Design Direction</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Instrument+Serif:ital@0;1&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #ecece4;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 60px 40px;
+    font-family: 'DM Sans', sans-serif;
+    background-image:
+      radial-gradient(ellipse at 60% 30%, rgba(210,180,140,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 70%, rgba(180,200,210,0.1) 0%, transparent 50%);
+  }
+
+  .app-window {
+    width: 920px; max-width: 100%;
+    background: rgba(255,255,250,0.65);
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px) saturate(160%);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.03),
+      0 2px 8px rgba(0,0,0,0.04),
+      0 8px 32px rgba(0,0,0,0.06),
+      0 24px 80px rgba(0,0,0,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .app-window::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 80% 0%, rgba(255,255,255,0.4) 0%, transparent 40%),
+      radial-gradient(ellipse at 0% 100%, rgba(255,255,255,0.2) 0%, transparent 30%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .layout { display: flex; height: 560px; position: relative; z-index: 1; }
+
+  /* ─── Sidebar ─── */
+  .sidebar {
+    width: 210px; padding: 28px 22px;
+    display: flex; flex-direction: column; gap: 2px;
+    position: relative;
+  }
+  .sidebar::after {
+    content: ''; position: absolute; top: 0; right: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(0,0,0,0.04) 10%,
+      rgba(0,0,0,0.06) 50%,
+      rgba(0,0,0,0.04) 90%,
+      transparent 100%);
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 32px;
+  }
+  .logo-mark {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: linear-gradient(135deg, #e07a5f, #d46a4e);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .logo-mark::after {
+    content: ''; position: absolute;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 0 6px rgba(255,255,255,0.4);
+  }
+  .logo-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px; font-style: italic; color: #2d2a26;
+    letter-spacing: 0.3px; line-height: 1;
+  }
+
+  .nav-item {
+    padding: 9px 14px; border-radius: 10px;
+    font-size: 13px; font-weight: 450; color: rgba(0,0,0,0.3);
+    letter-spacing: 0.2px; transition: all 0.2s ease;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-icon {
+    width: 20px; text-align: center; font-size: 15px; opacity: 0.5;
+  }
+  .nav-active {
+    color: #d46a4e; font-weight: 550;
+    position: relative;
+    background: rgba(224,122,95,0.06);
+  }
+  .nav-active .nav-icon { opacity: 1; }
+
+  .nav-section-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(0,0,0,0.15); font-weight: 600;
+    padding: 20px 14px 8px;
+  }
+
+  .nav-play {
+    margin-top: auto; margin-bottom: 8px;
+    padding: 10px 14px; border-radius: 10px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: rgba(0,0,0,0.2); letter-spacing: 1px;
+    text-transform: uppercase; font-weight: 500;
+  }
+  .nav-play-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 6px rgba(52,211,153,0.4);
+  }
+
+  /* ─── Main Content ─── */
+  .content {
+    flex: 1; padding: 32px 36px;
+    display: flex; flex-direction: column;
+    gap: 22px; position: relative;
+  }
+
+  /* Waveform background decoration */
+  .content::before {
+    content: '';
+    position: absolute; top: 120px; right: 0; bottom: 0; left: 0;
+    background:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 600 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 150 Q 37.5 80, 75 150 T 150 150 T 225 150 T 300 150 T 375 150 T 450 150 T 525 150 T 600 150' fill='none' stroke='rgba(0,0,0,0.02)' stroke-width='1.5'/%3E%3Cpath d='M0 170 Q 37.5 100, 75 170 T 150 170 T 225 170 T 300 170 T 375 170 T 450 170 T 525 170 T 600 170' fill='none' stroke='rgba(0,0,0,0.015)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+    background-size: 600px 300px;
+    opacity: 0.5; pointer-events: none;
+    mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.5) 60%, transparent 90%);
+    -webkit-mask-image: linear-gradient(0deg, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.5) 60%, transparent 90%);
+  }
+
+  /* ─── Hero Row ─── */
+  .hero-row {
+    display: flex; align-items: flex-start; gap: 20px;
+    position: relative; z-index: 1;
+  }
+
+  .hero-text {
+    flex: 1;
+  }
+  .hero-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 3px;
+    color: rgba(0,0,0,0.25); font-weight: 600; margin-bottom: 6px;
+  }
+  .hero-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 38px; font-style: italic; color: #2d2a26;
+    line-height: 1; letter-spacing: -0.5px;
+  }
+  .hero-name span { color: #d46a4e; }
+
+  .connection-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.15);
+    border-radius: 24px; padding: 8px 16px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .connection-pulse {
+    width: 7px; height: 7px; border-radius: 50%; background: #34d399;
+    position: relative;
+    box-shadow: 0 0 0 0 rgba(52,211,153,0.4);
+    animation: pulseGreen 2s ease-out infinite;
+  }
+  @keyframes pulseGreen {
+    0% { box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(52,211,153,0); }
+    100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+  }
+  .connection-text {
+    font-size: 12px; font-weight: 600; color: #065f46;
+    letter-spacing: 0.3px;
+  }
+  .connection-method {
+    font-size: 10px; color: rgba(0,0,0,0.25); margin-left: 4px;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ─── Glass cards row ─── */
+  .cards-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr;
+    gap: 12px; position: relative; z-index: 1;
+  }
+
+  .glass-card {
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px; padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: relative; overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .glass-card::before {
+    content: '';
+    position: absolute; top: -60%; left: -30%;
+    width: 160%; height: 160%;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 60%);
+    pointer-events: none; opacity: 0.5;
+  }
+  .glass-card-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(0,0,0,0.2); font-weight: 600; margin-bottom: 8px;
+    position: relative; z-index: 1;
+  }
+  .glass-card-value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 34px; font-style: italic; color: #2d2a26;
+    line-height: 1; position: relative; z-index: 1;
+  }
+  .glass-card-unit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-style: normal; font-weight: 400;
+    color: rgba(0,0,0,0.25); letter-spacing: 0.5px;
+    margin-left: 2px;
+  }
+
+  /* ─── Audio Visualizer Card (wider) ─── */
+  .viz-card {
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px; padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: relative; overflow: hidden;
+  }
+  .viz-card::before {
+    content: '';
+    position: absolute; top: -60%; left: -30%;
+    width: 160%; height: 160%;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 60%);
+    pointer-events: none; opacity: 0.5;
+  }
+  .viz-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(0,0,0,0.2); font-weight: 600; margin-bottom: 10px;
+    position: relative; z-index: 1;
+  }
+  .viz-display {
+    position: relative; z-index: 1;
+    height: 48px; display: flex; align-items: flex-end; gap: 2px;
+  }
+  .viz-bar {
+    flex: 1; border-radius: 2px 2px 0 0;
+    background: linear-gradient(180deg, #d46a4e 0%, rgba(224,122,95,0.3) 100%);
+    animation: vizAnimate 0.8s ease-in-out infinite alternate;
+  }
+  @keyframes vizAnimate { from { height: 25%; } to { height: 95%; } }
+  .viz-bar:nth-child(2) { animation-delay: 0.08s; }
+  .viz-bar:nth-child(3) { animation-delay: 0.16s; }
+  .viz-bar:nth-child(4) { animation-delay: 0.04s; }
+  .viz-bar:nth-child(5) { animation-delay: 0.12s; }
+  .viz-bar:nth-child(6) { animation-delay: 0.20s; }
+  .viz-bar:nth-child(7) { animation-delay: 0.06s; }
+  .viz-bar:nth-child(8) { animation-delay: 0.14s; }
+  .viz-bar:nth-child(9) { animation-delay: 0.22s; }
+  .viz-bar:nth-child(10) { animation-delay: 0.10s; }
+  .viz-bar:nth-child(11) { animation-delay: 0.18s; }
+  .viz-bar:nth-child(12) { animation-delay: 0.02s; }
+  .viz-bar:nth-child(13) { animation-delay: 0.24s; }
+  .viz-bar:nth-child(14) { animation-delay: 0.06s; }
+  .viz-bar:nth-child(15) { animation-delay: 0.14s; }
+  .viz-bar:nth-child(16) { animation-delay: 0.08s; }
+  .viz-bar:nth-child(17) { animation-delay: 0.20s; }
+  .viz-bar:nth-child(18) { animation-delay: 0.12s; }
+  .viz-bar:nth-child(19) { animation-delay: 0.04s; }
+  .viz-bar:nth-child(20) { animation-delay: 0.16s; }
+  .viz-bar:nth-child(21) { animation-delay: 0.10s; }
+  .viz-bar:nth-child(22) { animation-delay: 0.22s; }
+  .viz-bar:nth-child(23) { animation-delay: 0.02s; }
+  .viz-bar:nth-child(24) { animation-delay: 0.18s; }
+  .viz-bar:nth-child(25) { animation-delay: 0.08s; }
+  .viz-bar:nth-child(26) { animation-delay: 0.14s; }
+  .viz-bar:nth-child(27) { animation-delay: 0.06s; }
+  .viz-bar:nth-child(28) { animation-delay: 0.20s; }
+
+  /* ─── Stream info bar ─── */
+  .stream-bar {
+    display: flex; align-items: center; gap: 20px;
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px; padding: 14px 20px;
+    border: 1px solid rgba(255,255,255,0.6);
+    position: relative; z-index: 1;
+  }
+  .stream-item {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .stream-item-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(0,0,0,0.03); display: flex; align-items: center;
+    justify-content: center; font-size: 13px;
+  }
+  .stream-item-label {
+    font-size: 10px; color: rgba(0,0,0,0.25); letter-spacing: 0.5px;
+  }
+  .stream-item-value {
+    font-size: 13px; font-weight: 550; color: #2d2a26;
+    letter-spacing: 0.2px;
+  }
+  .stream-separator {
+    width: 1px; height: 24px; background: rgba(0,0,0,0.06);
+  }
+
+  .stream-action {
+    margin-left: auto; display: flex; gap: 8px;
+  }
+  .btn {
+    padding: 7px 16px; border-radius: 10px;
+    font-size: 12px; font-weight: 550; letter-spacing: 0.3px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: rgba(0,0,0,0.4); transition: all 0.2s ease;
+  }
+  .btn:hover { background: rgba(255,255,255,0.7); color: rgba(0,0,0,0.6); }
+  .btn-primary {
+    background: #d46a4e; color: #fff; border: none;
+    font-weight: 550;
+  }
+  .btn-primary:hover { background: #c05a3e; color: #fff; }
+
+  /* ─── Spectral display area ─── */
+  .spectral-area {
+    display: flex; gap: 12px; position: relative; z-index: 1;
+  }
+  .spectral-left {
+    flex: 1.5;
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px; padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.5);
+    position: relative; overflow: hidden;
+  }
+  .spectral-right {
+    flex: 1;
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px; padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+  .spec-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(0,0,0,0.2); font-weight: 600; margin-bottom: 12px;
+  }
+  .spec-chart {
+    display: flex; align-items: flex-end; gap: 3px; height: 80px;
+  }
+  .spec-freq {
+    flex: 1; border-radius: 3px 3px 0 0;
+    background: linear-gradient(180deg, #d46a4e 0%, rgba(224,122,95,0.15) 80%, transparent 100%);
+    animation: specAnim 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes specAnim { from { opacity: 0.4; } to { opacity: 1; } }
+  .spec-freq:nth-child(2) { animation-delay: 0.1s; animation-duration: 0.9s; }
+  .spec-freq:nth-child(3) { animation-delay: 0.2s; animation-duration: 1.1s; }
+  .spec-freq:nth-child(4) { animation-delay: 0.15s; animation-duration: 1.0s; }
+  .spec-freq:nth-child(5) { animation-delay: 0.25s; animation-duration: 0.8s; }
+  .spec-freq:nth-child(6) { animation-delay: 0.05s; animation-duration: 1.3s; }
+  .spec-freq:nth-child(7) { animation-delay: 0.18s; animation-duration: 0.95s; }
+  .spec-freq:nth-child(8) { animation-delay: 0.22s; animation-duration: 1.05s; }
+  .spec-freq:nth-child(9) { animation-delay: 0.12s; animation-duration: 0.85s; }
+  .spec-freq:nth-child(10) { animation-delay: 0.28s; animation-duration: 1.15s; }
+  .spec-freq:nth-child(11) { animation-delay: 0.08s; animation-duration: 0.9s; }
+  .spec-freq:nth-child(12) { animation-delay: 0.16s; animation-duration: 0.75s; }
+
+  .spec-right-items {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .spec-right-row {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .spec-right-label {
+    font-size: 12px; color: rgba(0,0,0,0.3); font-weight: 500;
+  }
+  .spec-right-value {
+    font-size: 13px; color: #2d2a26; font-weight: 600;
+    text-align: right;
+  }
+  .spec-pair-tag {
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 6px;
+    background: rgba(0,0,0,0.03);
+  }
+
+  /* ─── Mini Equalizer circles (top right decoration) ─── */
+  .eq-decoration {
+    position: absolute; top: 28px; right: 32px;
+    display: flex; gap: 2px; align-items: flex-end; height: 28px;
+    opacity: 0.3; z-index: 0;
+  }
+  .eq-dot {
+    width: 3px; border-radius: 1.5px;
+    background: #d46a4e;
+    animation: eqBounce 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes eqBounce { from { height: 8px; } to { height: 24px; } }
+  .eq-dot:nth-child(1) { animation-delay: 0s; }
+  .eq-dot:nth-child(2) { animation-delay: 0.1s; }
+  .eq-dot:nth-child(3) { animation-delay: 0.2s; }
+  .eq-dot:nth-child(4) { animation-delay: 0.15s; }
+  .eq-dot:nth-child(5) { animation-delay: 0.05s; }
+
+</style>
+</head>
+<body>
+
+<div class="app-window">
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        <div class="logo-text">Rewave</div>
+      </div>
+
+      <div class="nav-item nav-active">
+        <span class="nav-icon">&#9670;</span> Devices
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">&#9704;</span> Dashboard
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">&#9783;</span> Settings
+      </div>
+
+      <div class="nav-section-label">Pairing</div>
+      <div class="nav-item">
+        <span class="nav-icon">&#9733;</span> Paired Devices
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">&#9854;</span> Pair New
+      </div>
+
+      <div class="nav-play">
+        <div class="nav-play-dot"></div>
+        Streaming &middot; 42ms
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+      <div class="eq-decoration">
+        <div class="eq-dot"></div><div class="eq-dot"></div>
+        <div class="eq-dot"></div><div class="eq-dot"></div><div class="eq-dot"></div>
+      </div>
+
+      <!-- Hero Row -->
+      <div class="hero-row">
+        <div class="hero-text">
+          <div class="hero-label">Now Connected</div>
+          <div class="hero-name">Sony <span>Xperia</span> Tab</div>
+        </div>
+        <div class="connection-badge">
+          <div class="connection-pulse"></div>
+          <div class="connection-text">Streaming</div>
+          <div class="connection-method">Wi-Fi Aware</div>
+        </div>
+      </div>
+
+      <!-- Glass metric cards -->
+      <div class="cards-row">
+        <div class="glass-card">
+          <div class="glass-card-label">Latency</div>
+          <div class="glass-card-value">42<span class="glass-card-unit">ms</span></div>
+        </div>
+        <div class="glass-card">
+          <div class="glass-card-label">Bitrate</div>
+          <div class="glass-card-value">1.5<span class="glass-card-unit">Mbps</span></div>
+        </div>
+        <div class="glass-card">
+          <div class="glass-card-label">Packets</div>
+          <div class="glass-card-value">24.8<span class="glass-card-unit">k</span></div>
+        </div>
+        <div class="viz-card">
+          <div class="viz-label">Output Waveform &middot; Ch L+R</div>
+          <div class="viz-display">
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+            <div class="viz-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spectral / Details row -->
+      <div class="spectral-area">
+        <div class="spectral-left">
+          <div class="spec-label">Spectral Display &middot; 48 kHz</div>
+          <div class="spec-chart">
+            <div class="spec-freq" style="height:40%"></div>
+            <div class="spec-freq" style="height:55%"></div>
+            <div class="spec-freq" style="height:35%"></div>
+            <div class="spec-freq" style="height:70%"></div>
+            <div class="spec-freq" style="height:85%"></div>
+            <div class="spec-freq" style="height:60%"></div>
+            <div class="spec-freq" style="height:45%"></div>
+            <div class="spec-freq" style="height:75%"></div>
+            <div class="spec-freq" style="height:50%"></div>
+            <div class="spec-freq" style="height:65%"></div>
+            <div class="spec-freq" style="height:30%"></div>
+            <div class="spec-freq" style="height:80%"></div>
+          </div>
+        </div>
+        <div class="spectral-right">
+          <div class="spec-label">Session Info</div>
+          <div class="spec-right-items">
+            <div class="spec-right-row">
+              <span class="spec-right-label">Link Type</span>
+              <span class="spec-right-value">Wi-Fi Aware</span>
+            </div>
+            <div class="spec-right-row">
+              <span class="spec-right-label">Format</span>
+              <span class="spec-right-value">48 kHz &middot; 16-bit PCM</span>
+            </div>
+            <div class="spec-right-row">
+              <span class="spec-right-label">Encryption</span>
+              <span class="spec-right-value">AES-256-GCM</span>
+            </div>
+            <div class="spec-right-row">
+              <span class="spec-right-label">Pairing</span>
+              <span class="spec-pair-tag">TOFU Resume</span>
+            </div>
+            <div class="spec-right-row">
+              <span class="spec-right-label">Buffer</span>
+              <span class="spec-right-value">6/20 &middot; 30ms target</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stream info bar -->
+      <div class="stream-bar">
+        <div class="stream-item">
+          <div class="stream-item-icon">&#9670;</div>
+          <div>
+            <div class="stream-item-label">Source</div>
+            <div class="stream-item-value">WASAPI Loopback</div>
+          </div>
+        </div>
+        <div class="stream-separator"></div>
+        <div class="stream-item">
+          <div class="stream-item-icon">&#9783;</div>
+          <div>
+            <div class="stream-item-label">Output</div>
+            <div class="stream-item-value">Oboe AAudio</div>
+          </div>
+        </div>
+        <div class="stream-separator"></div>
+        <div class="stream-item">
+          <div class="stream-item-icon">&#9733;</div>
+          <div>
+            <div class="stream-item-label">Uptime</div>
+            <div class="stream-item-value">02:04:32</div>
+          </div>
+        </div>
+        <div class="stream-action">
+          <div class="btn">Settings</div>
+          <div class="btn btn-primary">Disconnect</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

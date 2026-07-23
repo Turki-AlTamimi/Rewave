@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewave — More Visual Directions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600&family=Rubik:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Unbounded:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Chivo+Mono:wght@300;400;500&family=Archivo:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    color: #e0e0e0;
+    font-family: 'Inter Tight', sans-serif;
+    padding: 0;
+  }
+
+  .concept {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .concept-label {
+    position: absolute;
+    top: 24px;
+    left: 32px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .app-window {
+    width: 780px;
+    max-width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  /* ─── CONCEPT E: EDITORIAL / MAGAZINE ─── */
+  .editorial {
+    background: #0e0e12;
+    background-image:
+      radial-gradient(ellipse at 85% 15%, rgba(255,255,255,0.02) 0%, transparent 50%);
+    font-family: 'Inter Tight', sans-serif;
+  }
+  .editorial .app-window { background: #131318; border: 1px solid rgba(255,255,255,0.04); }
+
+  .ed-window { display: flex; height: 480px; }
+  .ed-hero {
+    flex: 1; padding: 40px 44px; display: flex; flex-direction: column;
+    justify-content: center; position: relative;
+  }
+  .ed-eyebrow {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(255,255,255,0.2); margin-bottom: 16px;
+  }
+  .ed-headline {
+    font-family: 'Instrument Serif', serif;
+    font-size: 56px; line-height: 1; color: #e8e4dc;
+    font-style: italic; letter-spacing: -1px;
+  }
+  .ed-headline span { color: #ff6b4a; font-style: italic; }
+  .ed-subhead {
+    font-size: 15px; color: rgba(255,255,255,0.35); line-height: 1.5;
+    margin-top: 16px; max-width: 340px; font-weight: 300;
+  }
+  .ed-stat-row {
+    display: flex; gap: 32px; margin-top: 28px;
+  }
+  .ed-stat {
+    display: flex; flex-direction: column;
+  }
+  .ed-stat-val {
+    font-family: 'Instrument Serif', serif;
+    font-size: 40px; line-height: 1; color: #e8e4dc; font-style: italic;
+  }
+  .ed-stat-lbl {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(255,255,255,0.2); margin-top: 4px;
+  }
+  .ed-line {
+    position: absolute; bottom: 40px; left: 44px; right: 44px;
+    height: 1px; background: rgba(255,255,255,0.06);
+  }
+  .ed-device-strip {
+    position: absolute; bottom: 16px; left: 44px; right: 44px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ed-device-avatar {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg, rgba(255,107,74,0.3), rgba(255,107,74,0.1));
+    border: 1px solid rgba(255,107,74,0.2);
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .ed-device-name {
+    font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .ed-device-badge {
+    margin-left: auto; font-size: 10px; letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.2); text-transform: uppercase;
+  }
+  .ed-nav {
+    width: 220px; border-left: 1px solid rgba(255,255,255,0.04);
+    padding: 40px 28px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .ed-nav-item {
+    font-size: 13px; color: rgba(255,255,255,0.2); letter-spacing: 0.5px;
+    font-weight: 400; padding: 6px 0;
+  }
+  .ed-nav-active {
+    color: #ff6b4a; font-weight: 500;
+  }
+  .ed-audio-marker {
+    margin-top: auto; font-size: 10px; letter-spacing: 2px;
+    color: rgba(255,255,255,0.08); text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ed-audio-marker::before {
+    content: ''; width: 4px; height: 4px; background: #ff6b4a;
+    box-shadow: 0 0 6px rgba(255,107,74,0.5);
+  }
+
+  /* ─── CONCEPT F: WINDOWS ACRYLIC / NATIVE ─── */
+  .acrylic {
+    background: #1c1c1c;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 Q30 0 60 30 Q30 60 0 30' fill='none' stroke='rgba(255,255,255,0.02)'/%3E%3C/svg%3E");
+    font-family: 'Rubik', sans-serif;
+  }
+  .acrylic .app-window {
+    background: rgba(32,32,36,0.75);
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .ac-window {
+    display: flex; flex-direction: column; height: 480px;
+  }
+  .ac-titlebar {
+    height: 36px; display: flex; align-items: center; padding: 0 14px;
+    gap: 8px;
+  }
+  .ac-title-text {
+    font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .ac-body {
+    flex: 1; display: flex;
+  }
+  .ac-sidebar {
+    width: 56px; display: flex; flex-direction: column; align-items: center;
+    padding: 16px 0; gap: 8px;
+  }
+  .ac-nav-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: rgba(255,255,255,0.3);
+    transition: all 0.2s ease;
+  }
+  .ac-nav-active {
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9);
+  }
+  .ac-content {
+    flex: 1; padding: 16px 24px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .ac-banner {
+    background: rgba(255,255,255,0.03); border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05); padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .ac-banner-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(99,102,241,0.05));
+    border: 1px solid rgba(99,102,241,0.15);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .ac-banner-info { display: flex; flex-direction: column; gap: 2px; }
+  .ac-banner-name {
+    font-size: 18px; font-weight: 600; color: #f0f0f0; letter-spacing: -0.3px;
+  }
+  .ac-banner-sub {
+    font-size: 12px; color: rgba(255,255,255,0.3); font-weight: 400;
+  }
+  .ac-banner-status {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    background: rgba(34,197,94,0.08); padding: 4px 12px; border-radius: 16px;
+    font-size: 11px; color: #22c55e; font-weight: 500;
+  }
+  .ac-banner-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+    box-shadow: 0 0 6px rgba(34,197,94,0.3);
+  }
+  .ac-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  .ac-stat-card {
+    background: rgba(255,255,255,0.02); border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.04); padding: 16px;
+  }
+  .ac-stat-card .val {
+    font-size: 24px; font-weight: 600; color: #f0f0f0;
+    font-family: 'Rubik', sans-serif;
+  }
+  .ac-stat-card .lbl {
+    font-size: 10px; color: rgba(255,255,255,0.25); text-transform: uppercase;
+    letter-spacing: 1.5px; margin-top: 2px;
+  }
+  .ac-progress {
+    background: rgba(255,255,255,0.02); border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.04); padding: 18px 20px;
+  }
+  .ac-progress-label {
+    font-size: 10px; color: rgba(255,255,255,0.2); text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 10px;
+  }
+  .ac-progress-bar {
+    height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px;
+    overflow: hidden;
+  }
+  .ac-progress-fill {
+    width: 62%; height: 100%; background: linear-gradient(90deg, #6366f1, #818cf8);
+    border-radius: 2px;
+  }
+  .ac-progress-hint {
+    display: flex; justify-content: space-between; margin-top: 6px;
+    font-size: 10px; color: rgba(255,255,255,0.12); letter-spacing: 0.5px;
+  }
+  .ac-command-row {
+    display: flex; gap: 8px;
+  }
+  .ac-btn {
+    padding: 6px 16px; border-radius: 6px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.3px;
+    background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.06); transition: all 0.15s;
+  }
+  .ac-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
+  .ac-btn-danger { color: #ef4444; }
+  .ac-btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+  /* ─── CONCEPT G: RETROWAVE / VAPOR ─── */
+  .retro {
+    background: #0a0a1a;
+    background-image:
+      linear-gradient(180deg, rgba(120,0,180,0.1) 0%, transparent 40%),
+      linear-gradient(0deg, rgba(0,200,255,0.1) 0%, transparent 40%),
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+    font-family: 'Unbounded', sans-serif;
+  }
+  .retro .app-window {
+    background: linear-gradient(180deg, #1a0a2e 0%, #0d1b2a 100%);
+    border: 2px solid rgba(255,0,128,0.2);
+    box-shadow: 0 0 40px rgba(255,0,128,0.1), 0 0 80px rgba(0,200,255,0.05), 0 0 0 1px rgba(255,0,128,0.1);
+  }
+
+  .rt-window { display: flex; height: 480px; }
+  .rt-sidebar {
+    width: 190px; background: rgba(10,5,25,0.6); padding: 24px 18px;
+    border-right: 1px solid rgba(255,0,128,0.1);
+    display: flex; flex-direction: column; gap: 6px; position: relative;
+    overflow: hidden;
+  }
+  .rt-sidebar::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 120px; background: linear-gradient(0deg, rgba(255,0,128,0.05), transparent);
+  }
+  .rt-logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 16px; font-weight: 600; letter-spacing: 3px;
+    background: linear-gradient(180deg, #ff69b4, #ff1493);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 24px;
+    text-shadow: none;
+  }
+  .rt-nav-item {
+    padding: 8px 12px; border-radius: 4px; font-size: 11px;
+    color: rgba(255,255,255,0.2); letter-spacing: 1.5px;
+    font-family: 'Chivo Mono', monospace; text-transform: uppercase;
+  }
+  .rt-nav-active {
+    color: #ff69b4; background: rgba(255,105,180,0.06);
+    border-left: 2px solid #ff69b4;
+    text-shadow: 0 0 8px rgba(255,105,180,0.3);
+  }
+  .rt-content {
+    flex: 1; padding: 28px 30px; display: flex; flex-direction: column; gap: 18px;
+    position: relative;
+  }
+  .rt-sun {
+    position: absolute; top: -40px; right: -20px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,0,128,0.2) 0%, rgba(255,0,128,0.05) 40%, transparent 70%);
+    pointer-events: none;
+  }
+  .rt-content::before {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,200,255,0.3), rgba(255,0,128,0.3), transparent);
+  }
+  .rt-device-row {
+    display: flex; align-items: center; gap: 14px; z-index: 1;
+  }
+  .rt-device-glyph {
+    width: 44px; height: 44px; border: 2px solid rgba(255,0,128,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; position: relative;
+  }
+  .rt-device-glyph::after {
+    content: ''; position: absolute; inset: -4px;
+    border: 1px solid rgba(255,0,128,0.15);
+  }
+  .rt-device-name {
+    font-size: 18px; font-weight: 500; color: #f0e0ff;
+    letter-spacing: 0.5px;
+  }
+  .rt-device-tag {
+    margin-left: auto; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #ff69b4, #00c8ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Chivo Mono', monospace;
+  }
+  .rt-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; z-index: 1;
+  }
+  .rt-grid-cell {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+    padding: 16px; text-align: center;
+  }
+  .rt-grid-cell .val {
+    font-family: 'Chivo Mono', monospace; font-size: 28px; font-weight: 300;
+    background: linear-gradient(180deg, #ff69b4, #00c8ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .rt-grid-cell .lbl {
+    font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(255,255,255,0.15); margin-top: 4px;
+  }
+  .rt-wave-box {
+    border: 1px solid rgba(255,0,128,0.1); padding: 16px;
+    background: rgba(255,0,128,0.01); z-index: 1;
+    position: relative; overflow: hidden;
+  }
+  .rt-wave-box::before {
+    content: ''; position: absolute; top: -1px; left: -1px; right: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,200,255,0.4), transparent);
+    animation: rtScan 3s ease-in-out infinite;
+  }
+  @keyframes rtScan {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(calc(100% + 32px)); }
+  }
+  .rt-wave-label {
+    font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,255,255,0.12); margin-bottom: 10px;
+    font-family: 'Chivo Mono', monospace;
+  }
+  .rt-eq {
+    display: flex; gap: 2px; height: 36px; align-items: flex-end;
+  }
+  .rt-eq span {
+    flex: 1; border-radius: 1px;
+    background: linear-gradient(180deg, #ff69b4, #00c8ff);
+    animation: rtEq 0.7s ease-in-out infinite alternate;
+  }
+  @keyframes rtEq { from { height: 20%; } to { height: 100%; } }
+  .rt-eq span:nth-child(3n) { animation-delay: 0.1s; }
+  .rt-eq span:nth-child(5n+1) { animation-delay: 0.2s; }
+  .rt-eq span:nth-child(7n+3) { animation-delay: 0.15s; }
+  .rt-footer {
+    display: flex; gap: 24px; font-size: 8px; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(255,255,255,0.1);
+    font-family: 'Chivo Mono', monospace; z-index: 1;
+  }
+
+  /* ─── CONCEPT H: STUDIO / LIGHT ─── */
+  .studio {
+    background: #f5f5f0;
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.02) 0%, transparent 60%);
+    font-family: 'Archivo', sans-serif;
+  }
+  .studio .app-window {
+    background: #ffffff; border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .st-window { display: flex; height: 480px; }
+  .st-sidebar {
+    width: 200px; background: #fafaf7; padding: 28px 20px;
+    border-right: 1px solid rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .st-logo {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+    color: #1a1a2e; letter-spacing: -0.5px; margin-bottom: 28px;
+    font-variation-settings: 'opsz' 12;
+  }
+  .st-logo span { color: #d4a373; }
+  .st-nav-item {
+    padding: 8px 12px; border-radius: 6px; font-size: 13px;
+    color: rgba(0,0,0,0.25); font-weight: 500; letter-spacing: 0.3px;
+  }
+  .st-nav-active {
+    background: rgba(0,0,0,0.03); color: #1a1a2e; font-weight: 600;
+  }
+  .st-content {
+    flex: 1; padding: 32px 36px; display: flex; flex-direction: column; gap: 22px;
+  }
+  .st-status-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; background: #fafaf7; border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .st-connector {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .st-connector::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: #34d399; box-shadow: 0 0 0 2px rgba(52,211,153,0.2);
+  }
+  .st-connector span {
+    font-size: 12px; font-weight: 600; color: #1a1a2e; letter-spacing: 0.3px;
+  }
+  .st-segments {
+    display: flex; gap: 6px; margin-left: auto;
+  }
+  .st-segment {
+    font-size: 10px; color: rgba(0,0,0,0.2); letter-spacing: 1px;
+    text-transform: uppercase; padding: 4px 8px; border-radius: 4px;
+  }
+  .st-segment-active {
+    background: rgba(0,0,0,0.04); color: rgba(0,0,0,0.5);
+  }
+  .st-device-card {
+    background: #fafaf7; border-radius: 12px; border: 1px solid rgba(0,0,0,0.04);
+    padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+  }
+  .st-device-avatar {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .st-device-info { display: flex; flex-direction: column; gap: 1px; }
+  .st-device-name {
+    font-size: 17px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.3px;
+  }
+  .st-device-meta {
+    font-size: 12px; color: rgba(0,0,0,0.3); font-weight: 500;
+  }
+  .st-device-action {
+    margin-left: auto; padding: 6px 14px; border-radius: 8px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    color: #ef4444; background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.1);
+  }
+  .st-metric-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  .st-metric {
+    background: #fafaf7; border-radius: 10px; padding: 16px;
+    border: 1px solid rgba(0,0,0,0.03);
+  }
+  .st-metric .val {
+    font-family: 'Fraunces', serif; font-size: 28px; color: #1a1a2e;
+    font-variation-settings: 'opsz' 12;
+  }
+  .st-metric .lbl {
+    font-size: 10px; color: rgba(0,0,0,0.2); text-transform: uppercase;
+    letter-spacing: 2px; margin-top: 2px; font-weight: 600;
+  }
+  .st-audio-section {
+    background: #fafaf7; border-radius: 10px; padding: 20px;
+    border: 1px solid rgba(0,0,0,0.03);
+  }
+  .st-audio-label {
+    font-size: 10px; color: rgba(0,0,0,0.2); text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 12px; font-weight: 600;
+  }
+  .st-audio-viz {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .st-vu {
+    flex: 1; display: flex; gap: 3px; height: 28px; align-items: flex-end;
+    padding: 4px 0;
+  }
+  .st-vu span {
+    flex: 1; background: #d4a373; border-radius: 2px;
+    animation: stVU 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes stVU { from { height: 30%; } to { height: 100%; opacity: 0.6; } }
+  .st-vu span:nth-child(2n) { animation-delay: 0.08s; background: #e8c8a0; }
+  .st-vu span:nth-child(3n+1) { animation-delay: 0.16s; }
+  .st-vu span:nth-child(5n+2) { animation-delay: 0.12s; }
+  .st-buffer-indicator {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: rgba(0,0,0,0.3); font-weight: 500;
+  }
+  .st-buffer-ring {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid rgba(0,0,0,0.06);
+    border-top-color: #d4a373;
+    animation: stSpin 2s linear infinite;
+  }
+  @keyframes stSpin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- CONCEPT E: EDITORIAL / MAGAZINE -->
+<div class="concept editorial">
+  <div class="concept-label">CONCEPT E &mdash; Editorial / Magazine</div>
+  <div class="app-window">
+    <div class="ed-window">
+      <div class="ed-hero">
+        <div class="ed-eyebrow">Now Streaming</div>
+        <div class="ed-headline">Your audio,<br><span>reimagined.</span></div>
+        <div class="ed-subhead">48 kHz lossless PCM streamed to Sony Xperia Tab over Wi-Fi Aware with zero compression.</div>
+        <div class="ed-stat-row">
+          <div class="ed-stat">
+            <div class="ed-stat-val">42</div>
+            <div class="ed-stat-lbl">ms latency</div>
+          </div>
+          <div class="ed-stat">
+            <div class="ed-stat-val">1.5</div>
+            <div class="ed-stat-lbl">mbps</div>
+          </div>
+          <div class="ed-stat">
+            <div class="ed-stat-val">24k</div>
+            <div class="ed-stat-lbl">packets</div>
+          </div>
+        </div>
+        <div class="ed-line"></div>
+        <div class="ed-device-strip">
+          <div class="ed-device-avatar">&#9835;</div>
+          <div class="ed-device-name">Sony Xperia Tab</div>
+          <div class="ed-device-badge">Wi-Fi Aware</div>
+        </div>
+      </div>
+      <div class="ed-nav">
+        <div class="ed-nav-item ed-nav-active">Devices</div>
+        <div class="ed-nav-item">Dashboard</div>
+        <div class="ed-nav-item">Settings</div>
+        <div class="ed-nav-item">Pairing</div>
+        <div class="ed-audio-marker">Streaming</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT F: WINDOWS ACRYLIC / NATIVE -->
+<div class="concept acrylic">
+  <div class="concept-label">CONCEPT F &mdash; Windows Acrylic / Native</div>
+  <div class="app-window">
+    <div class="ac-window">
+      <div class="ac-titlebar">
+        <div class="ac-title-text">Rewave</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-sidebar">
+          <div class="ac-nav-icon ac-nav-active">&#9632;</div>
+          <div class="ac-nav-icon">&#9670;</div>
+          <div class="ac-nav-icon">&#9881;</div>
+        </div>
+        <div class="ac-content">
+          <div class="ac-banner">
+            <div class="ac-banner-icon">&#9835;</div>
+            <div class="ac-banner-info">
+              <div class="ac-banner-name">Sony Xperia Tab</div>
+              <div class="ac-banner-sub">Wi-Fi Aware link &middot; Paired with TOFU resume</div>
+            </div>
+            <div class="ac-banner-status">
+              <div class="ac-banner-dot"></div> Connected
+            </div>
+          </div>
+          <div class="ac-stats">
+            <div class="ac-stat-card">
+              <div class="val">42<span style="font-size:13px;opacity:0.4;">ms</span></div>
+              <div class="lbl">Latency</div>
+            </div>
+            <div class="ac-stat-card">
+              <div class="val">1.54<span style="font-size:13px;opacity:0.4;">Mbps</span></div>
+              <div class="lbl">Bitrate</div>
+            </div>
+            <div class="ac-stat-card">
+              <div class="val">24.8<span style="font-size:13px;opacity:0.4;">k</span></div>
+              <div class="lbl">Packets</div>
+            </div>
+            <div class="ac-stat-card">
+              <div class="val">02:04</div>
+              <div class="lbl">Uptime</div>
+            </div>
+          </div>
+          <div class="ac-progress">
+            <div class="ac-progress-label">Stream Buffer</div>
+            <div class="ac-progress-bar">
+              <div class="ac-progress-fill"></div>
+            </div>
+            <div class="ac-progress-hint">
+              <span>6 / 20 packets</span>
+              <span>Target: 6 (30ms)</span>
+            </div>
+          </div>
+          <div class="ac-command-row">
+            <div class="ac-btn ac-btn-danger">Disconnect</div>
+            <div class="ac-btn">Pair New Device</div>
+            <div class="ac-btn">Settings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT G: RETROWAVE -->
+<div class="concept retro">
+  <div class="concept-label">CONCEPT G &mdash; Retrowave / Vapor</div>
+  <div class="app-window">
+    <div class="rt-window">
+      <div class="rt-sidebar">
+        <div class="rt-logo">REWAVE</div>
+        <div class="rt-nav-item rt-nav-active">Devices</div>
+        <div class="rt-nav-item">Dashboard</div>
+        <div class="rt-nav-item">Settings</div>
+        <div style="margin-top:auto;" class="rt-nav-item">About</div>
+      </div>
+      <div class="rt-content">
+        <div class="rt-sun"></div>
+        <div class="rt-device-row">
+          <div class="rt-device-glyph">&#9670;</div>
+          <div class="rt-device-name">SONY XPERIA TAB</div>
+          <div class="rt-device-tag">NAN ACTIVE</div>
+        </div>
+        <div class="rt-grid">
+          <div class="rt-grid-cell">
+            <div class="val">42</div>
+            <div class="lbl">Latency ms</div>
+          </div>
+          <div class="rt-grid-cell">
+            <div class="val">1.5</div>
+            <div class="lbl">Mbps</div>
+          </div>
+          <div class="rt-grid-cell">
+            <div class="val">24k</div>
+            <div class="lbl">Packets</div>
+          </div>
+        </div>
+        <div class="rt-wave-box">
+          <div class="rt-wave-label">Output Waveform</div>
+          <div class="rt-eq">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="rt-footer">
+          <span>WASAPI LOOPBACK</span>
+          <span>INT16 48kHz</span>
+          <span>AES-256-GCM</span>
+          <span>OBOE AAUDIO</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT H: STUDIO / LIGHT -->
+<div class="concept studio">
+  <div class="concept-label">CONCEPT H &mdash; Studio / Light Mode</div>
+  <div class="app-window">
+    <div class="st-window">
+      <div class="st-sidebar">
+        <div class="st-logo">re<span>wave</span></div>
+        <div class="st-nav-item st-nav-active">Devices</div>
+        <div class="st-nav-item">Dashboard</div>
+        <div class="st-nav-item">Settings</div>
+        <div class="st-nav-item">Pairing</div>
+        <div style="margin-top:auto;" class="st-nav-item">About</div>
+      </div>
+      <div class="st-content">
+        <div class="st-status-bar">
+          <div class="st-connector"><span>Sony Xperia Tab</span></div>
+          <div class="st-segments" style="margin-left:auto;">
+            <span class="st-segment st-segment-active">Wi-Fi Aware</span>
+            <span class="st-segment">Same LAN</span>
+            <span class="st-segment">Direct</span>
+          </div>
+        </div>
+        <div class="st-device-card">
+          <div class="st-device-avatar">&#9835;</div>
+          <div class="st-device-info">
+            <div class="st-device-name">Sony Xperia Tab</div>
+            <div class="st-device-meta">Connected via Wi-Fi Aware &middot; TOFU paired &middot; AES-256-GCM</div>
+          </div>
+          <div class="st-device-action">Disconnect</div>
+        </div>
+        <div class="st-metric-grid">
+          <div class="st-metric">
+            <div class="val">42</div>
+            <div class="lbl">Latency ms</div>
+          </div>
+          <div class="st-metric">
+            <div class="val">1.54</div>
+            <div class="lbl">Bitrate Mbps</div>
+          </div>
+          <div class="st-metric">
+            <div class="val">24.8k</div>
+            <div class="lbl">Packets</div>
+          </div>
+          <div class="st-metric">
+            <div class="val">02:04</div>
+            <div class="lbl">Uptime</div>
+          </div>
+        </div>
+        <div class="st-audio-section">
+          <div class="st-audio-label">Output Waveform &middot; Buffer Health</div>
+          <div class="st-audio-viz">
+            <div class="st-vu">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="st-buffer-indicator">
+              <div class="st-buffer-ring"></div>
+              <span>6/20</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
