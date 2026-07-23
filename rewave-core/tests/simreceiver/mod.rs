@@ -16,6 +16,8 @@ use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 use std::time::Duration;
 
+type PcmSink = Arc<Mutex<Vec<(u32, Vec<u8>)>>>;
+
 #[derive(Default)]
 pub struct SimStats {
     pub auth_failures: u64,
@@ -39,7 +41,7 @@ pub struct SimReceiver {
     pub disc_port: u16,
     pub name: String,
     pub pin: String,
-    pub pcm_sink: Arc<Mutex<Vec<(u32, Vec<u8>)>>>,
+    pub pcm_sink: PcmSink,
     pub stats: Arc<Mutex<SimStats>>,
     shared: Arc<Mutex<Shared>>,
     shutdown: Arc<AtomicBool>,
@@ -221,7 +223,7 @@ fn audio_loop(
     pin: String,
     shared: Arc<Mutex<Shared>>,
     stats: Arc<Mutex<SimStats>>,
-    pcm_sink: Arc<Mutex<Vec<(u32, Vec<u8>)>>>,
+    pcm_sink: PcmSink,
     shutdown: Arc<AtomicBool>,
 ) {
     let mut dispatcher = Dispatcher::new();

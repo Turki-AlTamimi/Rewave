@@ -77,6 +77,7 @@ use rewave_core::crypto::ecdh::*;
 fn sender_priv() -> p256::SecretKey {
     p256::SecretKey::from_slice(&(1u8..=32).collect::<Vec<_>>()).unwrap()
 }
+#[allow(dead_code)]
 fn receiver_priv() -> p256::SecretKey {
     p256::SecretKey::from_slice(&(33u8..=64).collect::<Vec<_>>()).unwrap()
 }
