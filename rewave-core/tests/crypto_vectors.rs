@@ -71,3 +71,42 @@ fn m6_tag_covers_seq_be_and_pcm_only() {
     let tag = m6_tag(&key, 1, &pcm);
     assert_eq!(hex::encode(tag), "593a4d9af4447956");
 }
+
+use rewave_core::crypto::ecdh::*;
+
+fn sender_priv() -> p256::SecretKey {
+    p256::SecretKey::from_slice(&(1u8..=32).collect::<Vec<_>>()).unwrap()
+}
+fn receiver_priv() -> p256::SecretKey {
+    p256::SecretKey::from_slice(&(33u8..=64).collect::<Vec<_>>()).unwrap()
+}
+
+#[test]
+fn pubkey_encoding_is_65_byte_uncompressed() {
+    let (priv_out, pub_out) = generate_keypair_from(&sender_priv());
+    let _ = priv_out;
+    assert_eq!(hex::encode(pub_out), "04515c3d6eb9e396b904d3feca7f54fdcd0cc1e997bf375dca515ad0a6c3b4035f4536be3a50f318fbf9a5475902a221502bef0d57e08c53b2cc0a56f17d9f9354");
+}
+
+#[test]
+fn ecdh_shared_secret_matches_vector() {
+    let rpub = decode_pubkey(&hex::decode("041f140146bfb1b251f84f4ddbe0d4cdcfd77afd984a9520e35794021f8312bb9eec995a08b1fa7704df3dcc0b50a9665263fb7711f95f9f8a449c5096e47c892b").unwrap()).unwrap();
+    let shared = ecdh_shared(&sender_priv(), &rpub);
+    assert_eq!(hex::encode(shared), "4fe243908f378aa1c2a69538822e6ed908c3225d8692575507c649901245150a");
+}
+
+#[test]
+fn pairing_key_keyid_session_chain() {
+    let shared = hex::decode("4fe243908f378aa1c2a69538822e6ed908c3225d8692575507c649901245150a").unwrap();
+    let pk = derive_pairing_key(&shared.try_into().unwrap(), &NS, &NR);
+    assert_eq!(hex::encode(pk), "df11da0a69555c8462e9b53020fb3b1307635a207fa141ddc629901dba796ceb");
+    assert_eq!(hex::encode(derive_key_id(&pk)), "c134ef58cb87e775");
+    assert_eq!(hex::encode(derive_session_key(&pk, &NS, &NR)), "8d53f3e63960fe48eec89405147d4dd338ff11dcf9b84276667c7bd718c4ab38");
+}
+
+#[test]
+fn decode_pubkey_rejects_non_uncompressed_prefix() {
+    let mut bad = vec![0x02u8]; // compressed prefix
+    bad.extend_from_slice(&[0u8; 32]);
+    assert!(decode_pubkey(&bad).is_err());
+}
